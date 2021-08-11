@@ -5,10 +5,6 @@ import (
 	"os"
 )
 
-var (
-)
-
-
 
 func main() {
 	if err := App.Run(os.Args); err != nil {

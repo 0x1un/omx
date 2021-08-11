@@ -126,7 +126,14 @@ func init() {
 									url, uname, passwd := readBin()
 									ZbxConn = omx.NewZabbixConn(url, uname, passwd)
 								}
-								ZbxConn.CheckHostFromFile(c.StringSlice("file")...)
+								hosts := make([]string, 0)
+								files := c.StringSlice("file")
+								if len(files) == 1 {
+									hosts = strings.Split(files[0], ",")
+								} else if len(files) > 1 {
+									hosts = files
+								}
+								ZbxConn.CheckHostFromFile(hosts...)
 								return nil
 							},
 						},
