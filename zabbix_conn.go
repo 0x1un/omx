@@ -6,6 +6,8 @@ import (
 	"github.com/0x1un/go-zabbix"
 	"log"
 	"net/http"
+	"path"
+	"strings"
 )
 
 
@@ -20,6 +22,12 @@ func NewZabbixConn(url , username, password string) *ZabbixConn {
 				InsecureSkipVerify: true,
 			},
 		},
+	}
+	if !strings.HasPrefix(url, "http://") {
+		url = "http://" + url
+	}
+	if !strings.HasSuffix(url, "api_jsonrpc.php") {
+		url = path.Join(url, "api_jsonrpc.php")
 	}
 	cache := zabbix.NewSessionFileCache().SetFilePath("./zabbix_session")
 	session, err := zabbix.CreateClient(url).

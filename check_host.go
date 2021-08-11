@@ -15,15 +15,12 @@ func (z *ZabbixConn) CheckHost(ip ...string) {
 }
 
 func (z *ZabbixConn) CheckHostFromFile(files ...string) {
-	ipCache := make([]string, 0)
-	for _, file := range files {
-		ipCache = append(ipCache, ReadFileLines(file)...)
-	}
+	host := IniHostObj.ParseAINIFile(files...)
 	ips := z.ListHostIP()
 	strBuffer := strings.Builder{}
-	for _, ip := range ipCache {
+	for _, ip := range host.GetAllIP() {
 		if !Contains(ips, ip) {
-			strBuffer.WriteString(ip + " 不存在zabbix中\n")
+			strBuffer.WriteString(ip + "\t" + host.GetHostnameByIP(ip)+ "\t" + "\t不存在zabbix中\n")
 		}
 	}
 	if strBuffer.Len() != 0 {
