@@ -107,6 +107,29 @@ func init() {
 			Usage: "Zabbix操作命令",
 			Subcommands: []*cli.Command{
 				{
+					Name: "create",
+					Usage: "创建主机",
+					Subcommands: []*cli.Command {
+						{
+							Name: "from",
+							Flags: []cli.Flag{
+								&cli.StringSliceFlag{
+									Name: "file",
+									Required: true,
+								},
+							},
+							Action: func(c *cli.Context) error {
+								if ZbxConn == nil {
+									url, uname, passwd := readBin()
+									ZbxConn = omx.NewZabbixConn(url, uname, passwd)
+								}
+								ZbxConn.AddHostFromCsvFile(c.StringSlice("file")...)
+								return nil
+							},
+						},
+					},
+				},
+				{
 					Name: "check",
 					Aliases: []string{"chk", "ck"},
 					Usage: "检查命令",

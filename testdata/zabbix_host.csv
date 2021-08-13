@@ -1,0 +1,3 @@
+﻿主机名,主机IP,主机组,主机模板,主机代理
+hello,123.123.123.123,c2,"binghe_c2_api_template,binghe_chain_template",zabbix_proxy_zw_01
+hello2,123.123.123.124,c2,"binghe_c2_api_template,binghe_chain_template",zabbix_proxy_zw_01

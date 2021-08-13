@@ -6,6 +6,7 @@ import (
 	"github.com/0x1un/go-zabbix"
 	"log"
 	"net/http"
+	"net/url"
 	"path"
 	"strings"
 )
@@ -15,7 +16,7 @@ type ZabbixConn struct {
 	*zabbix.Session
 }
 
-func NewZabbixConn(url , username, password string) *ZabbixConn {
+func NewZabbixConn(urlLink , username, password string) *ZabbixConn {
 	client := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
@@ -23,14 +24,18 @@ func NewZabbixConn(url , username, password string) *ZabbixConn {
 			},
 		},
 	}
-	if !strings.HasPrefix(url, "http://") {
-		url = "http://" + url
+	u, err := url.Parse(urlLink)
+	if err != nil {
+		log.Fatalln(err)
 	}
-	if !strings.HasSuffix(url, "api_jsonrpc.php") {
-		url = path.Join(url, "api_jsonrpc.php")
+	if u.Scheme == "" {
+		u.Scheme = "http"
+	}
+	if !strings.HasSuffix(u.Path, "api_jsonrpc.php") {
+		u.Path = path.Join(u.Path, "api_jsonrpc.php")
 	}
 	cache := zabbix.NewSessionFileCache().SetFilePath("./zabbix_session")
-	session, err := zabbix.CreateClient(url).
+	session, err := zabbix.CreateClient(u.String()).
 		WithCache(cache).
 		WithHTTPClient(client).
 		WithCredentials(username, password).
